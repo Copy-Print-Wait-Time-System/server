@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
 import { connect } from "../database";
 
-export function store (req: Request, res: Response){
+export function getStore (req: Request, res: Response){
 
     const connection = connect();
 
-    var store_id = req.params.store_id
+    const store_id = req.params.store_id
 
     console.log(store_id);
 
