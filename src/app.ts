@@ -1,5 +1,6 @@
 import express, {Application} from "express";
 require('dotenv').config();
+const cors = require("cors");
 
 //Routes
 import StoresRouter from "./routes/stores.routes";
@@ -17,6 +18,15 @@ export class App {
     routes(){
         this.app.use('/stores', StoresRouter);
         this.app.use('/store', StoreRouter)
+    }
+
+    settings(){
+        const corsOptions = {
+            origin: "*",
+            credentials: true,
+            optionSuccessStatus: 200,
+        };
+        this.app.use(cors(corsOptions));
     }
 
     listen(){
