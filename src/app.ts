@@ -21,11 +21,16 @@ export class App {
     }
 
     settings(){
+        
+        this.app.use(express.json()) // for parsing application/json
+        this.app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
+        
         const corsOptions = {
             origin: "*",
             credentials: true,
             optionSuccessStatus: 200,
         };
+
         this.app.use(cors(corsOptions));
     }
 
