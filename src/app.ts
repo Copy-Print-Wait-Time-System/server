@@ -1,6 +1,6 @@
 import express, {Application} from "express";
 require('dotenv').config();
-const cors = require("cors");
+import cors from "cors";
 
 //Routes
 import StoresRouter from "./routes/stores.routes";
@@ -12,7 +12,9 @@ export class App {
 
     constructor(){
         this.app = express();
+        this.settings();
         this.routes();
+        
     }
     
     routes(){
@@ -22,16 +24,25 @@ export class App {
 
     settings(){
         
-        this.app.use(express.json()) // for parsing application/json
-        this.app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
-        
-        const corsOptions = {
-            origin: "*",
-            credentials: true,
-            optionSuccessStatus: 200,
-        };
-
-        this.app.use(cors(corsOptions));
+        const corsOptions: cors.CorsOptions ={
+            allowedHeaders: [
+                'Origin',
+                'X-Requested-With',
+                'Content-Type',
+                'Accept',
+                'X-Access-Token',
+              ],
+              credentials: true,
+              methods: 'GET,HEAD,OPTIONS,PUT,PATCH,POST,DELETE',
+              origin: '*',
+              preflightContinue: false,       
+          }
+          
+        this.app.use(cors(corsOptions)) 
+          
+        //Reads and parse incoming requests
+        this.app.use(express.urlencoded({extended: true})); 
+        this.app.use(express.json());
     }
 
     listen(){
