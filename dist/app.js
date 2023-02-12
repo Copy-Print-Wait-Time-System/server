@@ -14,8 +14,8 @@ class App {
     constructor() {
         this.PORT = process.env.PORT;
         this.app = (0, express_1.default)();
-        this.routes();
         this.settings();
+        this.routes();
     }
     routes() {
         this.app.use('/stores', stores_routes_1.default);
@@ -23,14 +23,22 @@ class App {
     }
     settings() {
         const corsOptions = {
-            origin: "*",
+            allowedHeaders: [
+                'Origin',
+                'X-Requested-With',
+                'Content-Type',
+                'Accept',
+                'X-Access-Token',
+            ],
             credentials: true,
-            optionSuccessStatus: 200,
+            methods: 'GET,HEAD,OPTIONS,PUT,PATCH,POST,DELETE',
+            origin: '*',
+            preflightContinue: false,
         };
         this.app.use((0, cors_1.default)(corsOptions));
         //Reads and parse incoming requests
         this.app.use(express_1.default.urlencoded({ extended: true }));
-        this.app.use(express_1.default.json({ limit: '50mb' }));
+        this.app.use(express_1.default.json());
     }
     listen() {
         this.app.listen(this.PORT);
