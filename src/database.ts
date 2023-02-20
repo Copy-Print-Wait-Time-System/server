@@ -6,8 +6,8 @@ export function connect(){
     const connection = createPool({
         connectionLimit : 10,
         host: process.env.URL,
-        user: process.env.USERNAME,
-        password: process.env.PASSWORD,
+        user: 'admin',
+        password: 'officedepot123',
         database: 'officedepot'
       })
 
