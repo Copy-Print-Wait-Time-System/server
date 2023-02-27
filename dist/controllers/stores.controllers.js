@@ -6,10 +6,9 @@ const zipcode_filter_1 = require("../functions/zipcode-filter");
 function stores(req, res) {
     const connection = (0, database_1.connect)();
     var zip_code = req.params.zip_code;
-    const zipcodesArray = (0, zipcode_filter_1.zipcodeFilter)(zip_code, 25);
-    console.log(zipcodesArray);
+    const zipcodesArray = (0, zipcode_filter_1.zipcodeFilter)(zip_code, 50);
     //this is the data that is going to be sent to the website.
-    connection.query(`SELECT * FROM stores WHERE zip=${zip_code}`, (err, result) => {
+    connection.query(`SELECT * FROM stores WHERE zip IN (?)`, [zipcodesArray], (err, result) => {
         return res.status(201).send(result);
     });
 }

@@ -5,6 +5,7 @@ import cors from "cors";
 //Routes
 import StoresRouter from "./routes/stores.routes";
 import StoreRouter from "./routes/store.routes";
+import QueueRouter from "./routes/queue.routes";
 
 export class App {
     PORT: any = process.env.PORT;
@@ -20,6 +21,7 @@ export class App {
     routes(){
         this.app.use('/stores', StoresRouter);
         this.app.use('/store', StoreRouter)
+        this.app.use('/queue', QueueRouter)
     }
 
     settings(){

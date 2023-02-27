@@ -10,6 +10,7 @@ const cors_1 = __importDefault(require("cors"));
 //Routes
 const stores_routes_1 = __importDefault(require("./routes/stores.routes"));
 const store_routes_1 = __importDefault(require("./routes/store.routes"));
+const queue_routes_1 = __importDefault(require("./routes/queue.routes"));
 class App {
     constructor() {
         this.PORT = process.env.PORT;
@@ -20,6 +21,7 @@ class App {
     routes() {
         this.app.use('/stores', stores_routes_1.default);
         this.app.use('/store', store_routes_1.default);
+        this.app.use('/queue', queue_routes_1.default);
     }
     settings() {
         const corsOptions = {
