@@ -6,9 +6,9 @@ require('dotenv').config();
 function connect() {
     const connection = (0, mysql2_1.createPool)({
         connectionLimit: 10,
-        host: process.env.URL,
-        user: process.env.USERNAME,
-        password: process.env.PASSWORD,
+        host: '127.0.0.1',
+        user: 'root',
+        password: '2727',
         database: 'officedepot'
     });
     connection.getConnection((err, connection) => {
