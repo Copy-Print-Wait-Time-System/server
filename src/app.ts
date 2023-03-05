@@ -22,7 +22,7 @@ export class App {
         this.app.use('/stores', StoresRouter);
         this.app.use('/store', StoreRouter)
         this.app.use('/queue', QueueRouter)
-        this.app.use('/employee', QueueRouter)
+        this.app.use('/employee', EmployeeRouter)
     }
 
     settings(){
