@@ -1,9 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.connect = void 0;
-const mysql_1 = require("mysql");
+const mysql2_1 = require("mysql2");
+require('dotenv').config();
 function connect() {
-    const connection = (0, mysql_1.createPool)({
+    const connection = (0, mysql2_1.createPool)({
         connectionLimit: 10,
         host: '127.0.0.1',
         user: 'root',

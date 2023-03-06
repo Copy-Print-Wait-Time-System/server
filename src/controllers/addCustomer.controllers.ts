@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import { connect } from "../database";
+import { calculateEstTime } from "../functions/calculateEstTime";
+import { updateStoreWaitTime } from "../functions/updateStoreWaitTime";
 
 export function addCustomer (req: Request, res: Response){
 
@@ -7,9 +9,13 @@ export function addCustomer (req: Request, res: Response){
     const data = req.body
     const store_id = req.params.store_id
 
-    const userName = data.Name
+    const first_name = data.first_name;
+    const last_name = data.last_name;
+    const jobs = data.jobs;
+    const job_type = data.job_type;
+
     //estTime will eventually be calculated with a Wait-Time algorithm
-    const estTime = 5
+    const estTime = calculateEstTime(jobs, job_type);
 
     console.log(data)
     
@@ -29,9 +35,17 @@ export function addCustomer (req: Request, res: Response){
         position = parseInt(position) + 1
 
         //Pass data to the store queue
-        connection.query(`insert into queues (userName, position, estimatedTime, store) values ("${userName}", ${position}, ${estTime}, ${store_id})`, (err:any, result:any) => {
+        connection.query(`insert into queues (name, last_name, position, estimatedTime, store) values ("${first_name}", "${last_name}",${position}, ${estTime}, ${store_id})`, (err:any, result:any) => {
+            if (err) {
+                console.error(err);
+                return res.status(400).send("Error with adding customer");
+            }
+            updateStoreWaitTime(store_id);
+
             return res.status(201).send("Customer added successfully to store #" + store_id)
         });
+
+
     });
 
 }
