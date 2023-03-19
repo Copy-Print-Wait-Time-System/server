@@ -4,11 +4,23 @@ import { connect } from "../../database";
 export function editCustomer (req: Request, res: Response){
 
     const connection = connect();
-    const data = req.body
+
     const store_id = req.params.store_id
+    const userID = req.body.userID
+    const userName = req.body.userName
+    const estimatedTime = req.body.estimatedTime
 
-    console.log(data)
+    console.log(store_id);
 
-    return res.status(201).send("Customer successfully edited from the queue in store #" + store_id)
+    // This will update the values for a specific user in the Queue
+    connection.query(`Update queues set userName = "${userName}", estimatedTime = "${estimatedTime}" where userID = "${userID}";`, (err:any, result:any) => {
+
+        //Check if userID exists
+        if (result[0] == null){
+            return res.status(201).send(`There is no user with ID ${userID} in the queue.`)
+        }
+
+        return res.status(201).send(result);
+    });
 
 }
