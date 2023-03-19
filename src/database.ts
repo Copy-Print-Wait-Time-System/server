@@ -8,7 +8,8 @@ export function connect(){
         host: '127.0.0.1',
         user: 'root',
         password: '2727',
-        database: 'officedepot'
+        database: 'officedepot',
+        multipleStatements: true
       })
 
       connection.getConnection((err, connection) => {
