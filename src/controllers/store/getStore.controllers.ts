@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import { connect } from "../database";
+import { connect } from "../../database";
 
-export function getQueueFromStore (req: Request, res: Response){
+export function getStore (req: Request, res: Response){
 
     const connection = connect();
 
@@ -10,7 +10,7 @@ export function getQueueFromStore (req: Request, res: Response){
     console.log(store_id);
 
     //this is the data that is going to be sent to the website.
-    connection.query(`SELECT * FROM queues WHERE store=${store_id}`, (err:any, result:any) => {
+    connection.query(`SELECT * FROM stores WHERE store=${store_id}`, (err:any, result:any) => {
         return res.status(201).send(result);
     });
 

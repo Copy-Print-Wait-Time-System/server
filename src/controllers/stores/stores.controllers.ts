@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { connect } from "../database";
-import { zipcodeFilter } from "../functions/zipcode-filter";
+import { connect } from "../../database";
+import { zipcodeFilter } from "../../functions/zipcode-filter";
 
 export function stores (req: Request, res: Response){
 

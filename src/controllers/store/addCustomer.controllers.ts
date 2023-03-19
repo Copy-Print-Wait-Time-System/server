@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import { connect } from "../database";
-import { calculateEstTime } from "../functions/calculateEstTime";
-import { updateStoreWaitTime } from "../functions/updateStoreWaitTime";
+import { connect } from "../../database";
+import { calculateEstTime } from "../../functions/calculateEstTime";
+import { updateStoreWaitTime } from "../../functions/updateStoreWaitTime";
 
 export function addCustomer (req: Request, res: Response){
 
