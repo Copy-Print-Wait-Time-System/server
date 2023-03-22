@@ -2,8 +2,8 @@ import { Router } from 'express'
 const router = Router();
 
 import { getQueueFromStore } from '../controllers/queue/getQueueFromStore.controllers'
-import { moveUpCustomer } from '../controllers/queue/moveUpCustomer.controller';
+import { moveCustomer } from '../controllers/queue/moveCustomer.controller';
 
-router.route('/:store_id').get(getQueueFromStore).put(moveUpCustomer)
+router.route('/:store_id').get(getQueueFromStore).put(moveCustomer)
 
 export default router;
