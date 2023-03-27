@@ -7,6 +7,7 @@ export function employeeVerification(req: Request, res: Response){
     const bcrypt = require('bcrypt');
     const store_id = parseInt(req.params.store_id)
 
+    //Get the stored and hashed PW from the database for the store being logged in to
     connection.query(`select hashedPW from storePasswords where store = ${store_id};`, (err:any, dbPW:any) => {
         if (err) {
             console.error(err);
@@ -18,9 +19,11 @@ export function employeeVerification(req: Request, res: Response){
             return res.status(201).send(`There is no store # ${store_id} in the database.`)
         }
 
+        //Convert the retrieved value into a string
         var json = JSON.parse(JSON.stringify(dbPW[0]));
         var storePW = json["hashedPW"];
 
+        //Using bcrypt, compare the entered password with the stored password and return boolean result.
         bcrypt.compare(req.body.password, storePW).then((result: any) => {
             console.log(result)
             return res.status(201).send(result);
