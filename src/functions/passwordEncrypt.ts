@@ -1,25 +1,39 @@
 import { connect } from "../database";
 
 const bcrypt = require('bcrypt');
-const saltRounds = 10;
+const saltRounds = 13;
 
-export function encrypt(password: string) : string {
+export function encrypt(store: number, password: string) : string {
 
-    return bcrypt.hash(password, saltRounds);
+    const connection = connect();
+
+    return bcrypt.hash(password, saltRounds).then((hash: any) => {
+        console.log(hash)
+
+        connection.query(`insert into storePasswords (store, hashedPW) values (${store}, "${hash}")`, (err:any, result:any) => {
+            if (err) {
+                console.error(err);
+                return "Error with password";
+            }
+
+            return result;
+        });
+    });
 
 }
 
-export function authenticate(storeID: number, password: string) : boolean {
+export function authenticate(storeID: number, password: string): any {
 
     const connection = connect();
-    
-    var storePW = connection.query(`select hashedPW from storepasswords where store = ${storeID};`, (err:any, dbPW:any) => {
+
+    connection.query(`select hashedPW from storePasswords where store = ${storeID};`, (err:any, dbPW:any) => {
         var json = JSON.parse(JSON.stringify(dbPW[0]));
         var storePW = json["hashedPW"];
 
-        return storePW;
+        bcrypt.compare(password, storePW).then((result: any) => {
+            console.log(result)
+            return result.status(201).send(result);
+        });
     });
-
-    return bcrypt.compare(password, storePW);
 
 }

@@ -4,18 +4,27 @@ import { connect } from "../../database";
 export function employeeVerification(req: Request, res: Response){
 
     const connection = connect();
+    const bcrypt = require('bcrypt');
+    const store_id = parseInt(req.params.store_id)
 
-    const pass = req.body.password;
+    connection.query(`select hashedPW from storePasswords where store = ${store_id};`, (err:any, dbPW:any) => {
+        if (err) {
+            console.error(err);
+            return res.status(400).send("Error loggin in.");
+        }
 
-    const store_id = req.params.store_id
+        //Check if Store # exists in DB. Without this check the server can crash if attemptint to login to nonexistant store.
+        if (dbPW[0] == null){
+            return res.status(201).send(`There is no store # ${store_id} in the database.`)
+        }
 
+        var json = JSON.parse(JSON.stringify(dbPW[0]));
+        var storePW = json["hashedPW"];
 
-    //this is the data that is going to be sent to the website.
-    connection.query(`SELECT password FROM passwords WHERE store = ${store_id}`, (err:any, result:any) => {
-        const db_pass = result[0].password;
-
-        return res.status(201).send(db_pass === pass);
+        bcrypt.compare(req.body.password, storePW).then((result: any) => {
+            console.log(result)
+            return res.status(201).send(result);
+        });
     });
-
 
 }
