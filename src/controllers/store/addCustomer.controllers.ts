@@ -15,7 +15,7 @@ export function addCustomer (req: Request, res: Response){
     const job_type = data.job_type;
 
     //estTime will eventually be calculated with a Wait-Time algorithm
-    const estTime = 15 //calculateEstTime(jobs, job_type);
+    const estTime = calculateEstTime(jobs, job_type, true);
 
     console.log(data)
     
