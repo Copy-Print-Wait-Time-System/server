@@ -1,16 +1,24 @@
 import { Request, Response } from "express";
-import { encrypt} from "../../functions/passwordEncrypt";
+import { connect } from "../../database";
 
 export function setPass(req: Request, res: Response){
 
-    const pass = req.body.password;
     const store_id = parseInt(req.params.store_id)
+    const bcrypt = require('bcrypt');
+    const saltRounds = 13;
 
-    console.log(pass);
-    console.log(store_id);
+    const connection = connect();
+    
+        bcrypt.hash(req.body.password, saltRounds).then((hash: any) => {
 
-    encrypt(store_id, pass);
-
-    return res.status(201).send(`Password set for store ${store_id}`);
-
-}
+            connection.query(`insert into storePasswords (store, hashedPW) values (${store_id}, "${hash}")`, (err:any, result:any) => {
+                if (err) {
+                    console.error(err);
+                    return res.status(400).send("Error setting password.");
+                }
+    
+                return res.status(201).send(`Password set for store ${store_id}`);
+            });
+        });
+    
+    }

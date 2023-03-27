@@ -10,7 +10,7 @@ export function employeeVerification(req: Request, res: Response){
     connection.query(`select hashedPW from storePasswords where store = ${store_id};`, (err:any, dbPW:any) => {
         if (err) {
             console.error(err);
-            return res.status(400).send("Error loggin in.");
+            return res.status(400).send("Error logging in.");
         }
 
         //Check if Store # exists in DB. Without this check the server can crash if attemptint to login to nonexistant store.
