@@ -7,7 +7,7 @@ export function connect(){
         connectionLimit : 10,
         host: '127.0.0.1',
         user: 'root',
-        password: '1408',
+        password: '2727',
         database: 'officedepot',
         multipleStatements: true
       })
