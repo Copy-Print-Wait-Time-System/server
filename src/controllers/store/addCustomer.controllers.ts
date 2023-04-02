@@ -9,34 +9,6 @@ export function addCustomer (req: Request, res: Response){
     const data = req.body
     const store_id = req.params.store_id
 
-    //{
-    //     fname: 'Lionel',
-    //     lname: 'Messi',
-    //     job: 'copy',
-    //     quantity: 2,
-    //     paperSize: 'letter',
-    //     paperType: 'gloss cardstock cover 10pt',
-    //     fitPaper: 'fit to paper',
-    //     color: 'full color',
-    //     sides: 'single sided',
-    //     orientation: 'portrait',
-    //     collate: 'colllated',
-    //     stapling: 'none',
-    //     cutting: 'none',
-    //     folding: 'none',
-    //     holePunching: '',
-    //     waferSealColor: 'none',
-    //     waferSealSides: 'none',
-    //     perforation: 'none',
-    //     lamination: 'none',
-    //     shrinkWrap: 'no',
-    //     addFoamBoardMounting: 'no',
-    //     removePages: '',
-    //     slipsheet: '',
-    //     trimToEdge: 'no',
-    //     specialInstructions: ''
-    //}
-
     //Check if job is color or B&W
     var color = (data.color == "full color" ? true : false)
     console.log(color)
