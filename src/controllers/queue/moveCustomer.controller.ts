@@ -2,11 +2,9 @@ import { Request, Response } from "express";
 import { connect } from "../../database";
 
 export function moveCustomer (req: Request, res: Response){
-
     const connection = connect();
 
     const store_id = req.params.store_id
-
     const userID = req.body.user_id;
     const up_or_down = req.body.up_or_down;
 
@@ -18,8 +16,7 @@ export function moveCustomer (req: Request, res: Response){
     const currentPosition = req.body.position;
     const switchPosition = (up_or_down == 'up' ? currentPosition - 1 : currentPosition + 1)
 
-    console.log(store_id, userID, currentPosition);
-
+    //prevents accidentally moving a customer up the queue when the user is already at the front.
     if (switchPosition == 0) {
         return res.status(400).send('Customer already on top of the queue');
     }
@@ -29,15 +26,12 @@ export function moveCustomer (req: Request, res: Response){
     SELECT count(*) from queues WHERE store = ${store_id};`, (err:any, sql_response:any) => {
         var max_position = parseInt(sql_response[1][0]["count(*)"])
         
+        //check that the customer in the queue is not the last one.
         if(switchPosition > max_position){
             return res.status(400).send('Customer last in the queue');
         } 
-
+        
         var idSwitchCustomer = parseInt(sql_response[0][0]["userID"])
-    
-        console.log(idSwitchCustomer, max_position)
-
-        console.log(userID, idSwitchCustomer)
 
         connection.query(`UPDATE queues SET position = ${switchPosition} WHERE userID = ${userID};
         UPDATE queues SET position = ${currentPosition} WHERE userID = ${idSwitchCustomer};`, (err:any, customerPosition:any) => {
