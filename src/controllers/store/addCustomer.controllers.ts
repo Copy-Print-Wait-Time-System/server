@@ -35,7 +35,7 @@ export function addCustomer (req: Request, res: Response){
         position = parseInt(position) + 1
 
         //Pass data to the store queue
-        connection.query(`insert into queues (name, last_name, position, estimatedTime, store) values ("${first_name}", "${last_name}",${position}, ${estTime}, ${store_id})`, (err:any, result:any) => {
+        connection.query(`insert into queues (firstName, lastName, position, estimatedTime, store) values ("${first_name}", "${last_name}",${position}, ${estTime}, ${store_id})`, (err:any, result:any) => {
             if (err) {
                 console.error(err);
                 return res.status(400).send("Error with adding customer");
