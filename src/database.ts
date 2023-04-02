@@ -5,9 +5,9 @@ export function connect(){
 
     const connection = createPool({
         connectionLimit : 10,
-        host: '127.0.0.1',
-        user: 'root',
-        password: '1408',
+        host: 'officedepot.ctoyac2wfwsj.us-east-1.rds.amazonaws.com',
+        user: 'admin',
+        password: 'group14ed2',
         database: 'officedepot',
         multipleStatements: true
       })
