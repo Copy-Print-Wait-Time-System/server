@@ -12,13 +12,13 @@ export function addCustomer (req: Request, res: Response){
     //Check if job is color or B&W
     var color = (data.color == "full color" ? true : false)
 
-    //estTime will eventually be calculated with a Wait-Time algorithm
+    // Calculate estimated time to complete job
     const estTime = calculateEstTime(data.copies, data.job, color);
     
     //First query gets the number of people in the stores queue
     connection.query(`select max(position) from queues where store = ${store_id};`, (err:any, dbPosition:any) => {
         
-        
+
         if (dbPosition == undefined){
             position = 0
         }
@@ -36,7 +36,8 @@ export function addCustomer (req: Request, res: Response){
         position = parseInt(position) + 1
 
         //Pass data to the store queue
-        connection.query(`insert into queues (firstName, lastName, position, estimatedTime, store) values ("${data.fname}", "${data.lname}",${position}, ${estTime}, ${store_id})`, (err:any, result:any) => {
+        connection.query(`insert into queues (firstName, lastName, position, estimatedTime, store)
+                        values ("${data.fname}", "${data.lname}",${position}, ${estTime}, ${store_id})`, (err:any, result:any) => {
             if (err) {
                 console.error(err);
                 return res.status(400).send("Error with adding customer");
