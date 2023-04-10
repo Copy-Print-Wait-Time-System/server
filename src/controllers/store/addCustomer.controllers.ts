@@ -9,11 +9,10 @@ export function addCustomer (req: Request, res: Response){
     const data = req.body
     const store_id = req.params.store_id
 
-    //Check if job is color or B&W
-    var color = (data.color == "full color" ? true : false)
+    const estTime = calculateEstTime(data);
 
-    // Calculate estimated time to complete job
-    const estTime = calculateEstTime(data.copies, data.job, color);
+    console.log(data)
+
     
     //First query gets the number of people in the stores queue
     connection.query(`select max(position) from queues where store = ${store_id};`, (err:any, dbPosition:any) => {
@@ -56,7 +55,8 @@ export function addCustomer (req: Request, res: Response){
 
                 //Pass required job information to database.
                 connection.query(`insert into customerJobs (userID, job, copies, numPages, paperSize, paperType, fitPaper, color, sides, orientation, jobCollate)
-                values (${userID}, "${data.job}", ${data.copies}, ${data.numPages}, "${data.paperSize}", "${data.paperType}", "${data.fitPaper}", "${data.color}", "${data.sides}", "${data.orientation}", "${data.collate}");`, (err:any, result:any) => {
+                values (${userID}, "${data.job}", ${data.copies}, "${data.numPages}", "${data.paperSize}", "${data.paperType}", "${data.fitPaper}", "${data.color}", "${data.sides}", "${data.orientation}", "${data.collate}");`, (err:any, result:any) => {
+
                     if (err) {
                         console.error(err);
                         return res.status(400).send("Error with adding customer");
