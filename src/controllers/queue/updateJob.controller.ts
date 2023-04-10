@@ -13,7 +13,7 @@ export function updateJob (req: Request, res: Response){
         var color = (data.color == "full color" ? true : false)
 
         // Calculate estimated time to complete job
-        var estTime = calculateEstTime(data.copies, data.job, color);
+        var estTime = calculateEstTime(data);
 
     // Updates all the fields for a user in the database
     connection.query(`UPDATE queues Q, customerJobs C, customerJobsOptional CO
