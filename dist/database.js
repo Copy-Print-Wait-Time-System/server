@@ -6,10 +6,11 @@ require('dotenv').config();
 function connect() {
     const connection = (0, mysql2_1.createPool)({
         connectionLimit: 10,
-        host: '127.0.0.1',
-        user: 'root',
-        password: '2727',
-        database: 'officedepot'
+        host: 'officedepot.ctoyac2wfwsj.us-east-1.rds.amazonaws.com',
+        user: 'admin',
+        password: 'group14ed2',
+        database: 'officedepot',
+        multipleStatements: true
     });
     connection.getConnection((err, connection) => {
         if (err) {
