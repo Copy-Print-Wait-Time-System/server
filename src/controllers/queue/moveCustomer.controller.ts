@@ -5,7 +5,7 @@ export function moveCustomer (req: Request, res: Response){
     const connection = connect();
 
     const store_id = req.params.store_id
-    const userID = req.body.user_id;
+    const userID = req.body.userID;
     const up_or_down = req.body.up_or_down;
 
     //Check if the user is already on top of the queue
