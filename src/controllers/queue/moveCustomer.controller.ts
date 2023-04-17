@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { connect } from "../../database";
+import { moveCustomerUpdateWaitTime } from "../../functions/moveCustomerUpdateWaitTime";
 
 export function moveCustomer (req: Request, res: Response){
     const connection = connect();
@@ -35,6 +36,8 @@ export function moveCustomer (req: Request, res: Response){
 
         connection.query(`UPDATE queues SET position = ${switchPosition} WHERE userID = ${userID};
         UPDATE queues SET position = ${currentPosition} WHERE userID = ${idSwitchCustomer};`, (err:any, customerPosition:any) => {
+
+            moveCustomerUpdateWaitTime(store_id, switchPosition, max_position)
 
             return res.status(201).send(up_or_down == 'up' ? 'Customer moved up the queue successfully' : 'Customer moved down the queue successfully');
         })
