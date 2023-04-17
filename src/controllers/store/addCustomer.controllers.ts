@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { connect } from "../../database";
 import { calculateEstTime } from "../../functions/calculateEstTime";
 import { updateStoreWaitTime } from "../../functions/updateStoreWaitTime";
+import { calculateTotalWaitTime } from "../../functions/calculateTotalWaitTime";
 
 export function addCustomer (req: Request, res: Response){
 
@@ -9,41 +10,45 @@ export function addCustomer (req: Request, res: Response){
     const data = req.body
     const store_id = req.params.store_id
 
-    const estTime = calculateEstTime(data);
-
-    console.log(data)
-
-    
+    const customerTime = calculateEstTime(data);
+  
     //First query gets the number of people in the stores queue
     connection.query(`select max(position) from queues where store = ${store_id};`, (err:any, dbPosition:any) => {
-        
+        var estimatedWaitTime;
 
         if (dbPosition == undefined){
             position = 0
         }
         else{
             //dbPosition comes back as a JSON, this code gets the value as a string
-        var json = JSON.parse(JSON.stringify(dbPosition[0]));
-        var position = json["max(position)"]
-
+            var json = JSON.parse(JSON.stringify(dbPosition[0]));
+            var position = json["max(position)"]
+        }
         //Check if queue is empty
         if (position == null){
             position = 0
         }
-        }
+        
         //Set position for new user in Queue
         position = parseInt(position) + 1
 
+        if(position == 1){
+            estimatedWaitTime = 0;
+        }
+        else{
+            estimatedWaitTime = calculateTotalWaitTime(position, store_id)
+        }
+
         //Pass data to the store queue
-        connection.query(`insert into queues (firstName, lastName, position, estimatedWaitTime, store)
-                        values ("${data.fname}", "${data.lname}",${position}, ${estTime}, ${store_id})`, (err:any, result:any) => {
+        connection.query(`insert into queues (firstName, lastName, position, estimatedWaitTime, store, customerTime)
+                        values ("${data.fname}", "${data.lname}",${position}, ${estimatedWaitTime}, ${store_id}, ${customerTime})`, (err:any, result:any) => {
             if (err) {
                 console.error(err);
                 return res.status(400).send("Error with adding customer");
             }
 
             //get userID for this new customer.
-            connection.query(`select userID from queues where store = ${store_id} and firstName = "${data.fname}" and lastName = "${data.lname}" and estimatedWaitTime = "${estTime}";`, (err:any, userIDNumber:any) => {
+            connection.query(`select userID from queues where store = ${store_id} and firstName = "${data.fname}" and lastName = "${data.lname}" and customerTime = "${customerTime}";`, (err:any, userIDNumber:any) => {
                 if (err) {
                     console.error(err);
                     return res.status(400).send("Error with adding customer");
@@ -74,12 +79,10 @@ export function addCustomer (req: Request, res: Response){
 
             });
 
-            
             updateStoreWaitTime(store_id);
             
             return res.status(201).send("Customer added successfully to store #" + store_id)
         });
-
 
     });
 

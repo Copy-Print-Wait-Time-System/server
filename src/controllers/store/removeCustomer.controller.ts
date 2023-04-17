@@ -14,9 +14,15 @@ export function removeCustomer (req: Request, res: Response){
     console.log(data)
 
     //This query uses the userID to remove the user from the queue
-    connection.query(`DELETE FROM queues WHERE userID = ${user_ID};`, (err:any, result:any) => {
+    connection.query(`
+    
+    UPDATE queues
+    SET estimatedWaitTime = estimatedWaitTime - (SELECT estimatedWaitTime FROM queues WHERE store = ${store_id} AND userID = ${user_ID})
+    WHERE store = 4 AND position > ${userPosition}; 
+    
+    DELETE FROM queues WHERE userID = ${user_ID};` , (err:any, result:any) => {
 
-        // This query updates the positions of all users behind the removed user
+        // query updates the positions of all users behind the removed user
         connection.query(`UPDATE queues SET position = position - 1 WHERE store = ${store_id} AND position > ${userPosition};`, (err:any, result:any) => {
             updateStoreWaitTime(store_id)
 

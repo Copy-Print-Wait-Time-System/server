@@ -37,7 +37,9 @@ export function removeCustomerFromFront (req: Request, res: Response){
 
         });
 
-        connection.query(`DELETE FROM queues WHERE position = 1 AND store = ${store_id}; 
+        connection.query(`UPDATE queues
+        SET estimatedWaitTime = estimatedWaitTime - (SELECT estimatedWaitTime FROM queues WHERE position = 1 AND store = ${store_id})
+        WHERE store = ${store_id} AND position > 1; DELETE FROM queues WHERE position = 1 AND store = ${store_id}; 
         UPDATE queues SET position = position - 1 WHERE store = ${store_id} and position > 1;`, (err:any, sql_response:any) => {
             if (err) {
             console.error(err);
