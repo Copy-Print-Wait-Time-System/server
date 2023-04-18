@@ -4,7 +4,7 @@ require('dotenv').config();
 export function connect(){
 
     const connection = createPool({
-        connectionLimit : 61,
+        connectionLimit : 10,
         host: 'officedepot.ctoyac2wfwsj.us-east-1.rds.amazonaws.com',
         user: 'admin',
         password: 'group14ed2',

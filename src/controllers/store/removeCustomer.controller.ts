@@ -22,9 +22,11 @@ export function removeCustomer (req: Request, res: Response){
 
         // query updates the positions of all users behind the removed user
         connection.query(`UPDATE queues SET position = position - 1 WHERE store = ${store_id} AND position > ${userPosition};DELETE FROM queues WHERE userID = ${user_ID};`, (err:any, result:any) => {
-            updateStoreWaitTime(store_id)
-
+            updateStoreWaitTime(store_id);
+            connection.end();
             return res.status(201).send(`Customer with ID ${user_ID} successfully deleted from the queue in store #${store_id}.`)
         })
     })
+
+    
 }
