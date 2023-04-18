@@ -11,4 +11,6 @@ export function updateStoreWaitTime(store_id: string) : void {
         console.log(`Updated estimated time for store ${store_id}`)
     });
 
+    connection.end()
+
 }
