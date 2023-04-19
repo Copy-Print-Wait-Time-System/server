@@ -17,6 +17,5 @@ export function moveCustomerUpdateWaitTime(store_id: string, position1: number, 
         console.log(`test`)
     });
 
-    connection.end();
 
 }
