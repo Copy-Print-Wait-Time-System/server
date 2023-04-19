@@ -3,6 +3,7 @@ import { connect } from "../../database";
 import { calculateEstTime } from "../../functions/calculateEstTime";
 import { updateStoreWaitTime } from "../../functions/updateStoreWaitTime";
 import { calculateTotalWaitTime } from "../../functions/calculateTotalWaitTime";
+import { addJobInfo } from "../../functions/addJobInfo";
 
 export function addCustomer (req: Request, res: Response){
 
@@ -42,14 +43,14 @@ export function addCustomer (req: Request, res: Response){
 
         //Pass data to the store queue
         connection.query(`INSERT INTO queues (firstName, lastName, position, estimatedWaitTime, store, customerTime)
-                        VALUES ("${data.fname}", "${data.lname}",${position}, ${estimatedWaitTime}, ${store_id}, ${customerTime})`, (err:any, result:any) => {
+                        VALUES ("${data.fname}", "${data.lname}",${position}, ${estimatedWaitTime}, ${store_id}, ${customerTime})`, async (err:any, result:any) => {
             if (err) {
                 console.error(err);
                 return res.status(400).send("Error with adding customer");
             }
 
             //get userID for this new customer.
-            connection.query(`SELECT userID FROM queues WHERE store = ${store_id} AND firstName = "${data.fname}" AND lastName = "${data.lname}" AND customerTime = "${customerTime}";`, (err:any, userIDNumber:any) => {
+            connection.query(`SELECT userID FROM queues WHERE store = ${store_id} AND firstName = "${data.fname}" AND lastName = "${data.lname}" AND customerTime = "${customerTime}";`, async (err:any, userIDNumber:any) => {
                 if (err) {
                     console.error(err);
                     return res.status(400).send("Error with adding customer");
@@ -60,24 +61,21 @@ export function addCustomer (req: Request, res: Response){
                 var userID = json["userID"]
 
                 //Pass required job information and optional job information to database.
-                connection.query(`insert into customerJobs (userID, job, copies, numPages, paperSize, paperType, fitPaper, color, sides, orientation, jobCollate)
-                values (${userID}, "${data.job}", ${data.copies}, "${data.numPages}", "${data.paperSize}", "${data.paperType}", "${data.fitPaper}", "${data.color}", "${data.sides}", "${data.orientation}", "${data.collate}"); 
-                INSERT INTO customerJobsOptional (userID, stapling, cutting, folding, holePunching, waferSealColor, waferSealSides, perforation, lamination, shrinkWrap, addFoamBoardMounting, removePages, slipsheet, trimToEdge, specialInstructions)
-                VALUES (${userID}, "${data.stapling}", "${data.cutting}", "${data.folding}", "${data.holePunching}", "${data.waferSealColor}", "${data.waferSealSides}", "${data.perforation}", "${data.lamination}", "${data.shrinkWrap}", "${data.addFoamBoardMounting}", "${data.removePages}", "${data.slipsheet}", "${data.trimToEdge}", "${data.specialInstructions}");`, (err:any, result:any) => {
+                const job_message = await addJobInfo(data, userID);
 
-                    if (err) {
-                        console.error(err);
-                        return res.status(400).send("Error with adding customer");
-                    }
-                    
-                });
-
-
+                if(job_message){
+                    return res.status(400).send(job_message)
+                }
 
             });
 
-            updateStoreWaitTime(store_id);
-            
+            updateStoreWaitTime(store_id).then((resp) =>{
+                console.log(resp)
+                
+                connection.end();
+                            
+                
+            });
             
             return res.status(201).send("Customer added successfully to store #" + store_id)
         });

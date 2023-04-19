@@ -15,7 +15,6 @@ export function getStore (req: Request, res: Response){
         return res.status(201).send(result);
     });
 
-    connection.end();
 
 
 }
