@@ -70,11 +70,8 @@ export function addCustomer (req: Request, res: Response){
             });
 
             updateStoreWaitTime(store_id).then((resp) =>{
-                console.log(resp)
-                
+                console.log(resp);
                 connection.end();
-                            
-                
             });
             
             return res.status(201).send("Customer added successfully to store #" + store_id)
