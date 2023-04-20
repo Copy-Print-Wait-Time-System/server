@@ -18,6 +18,9 @@ export function getQueueFromStore (req: Request, res: Response){
             return res.status(400).send("Error with getting Queue");
         }
 
+        
+        connection.end();
+
         return res.status(201).send(result);
     });
 

@@ -6,6 +6,7 @@ export function removeCustomerFromFront (req: Request, res: Response){
 
     const store_id = req.params.store_id
     const userID = req.body.userID;
+    const estimatedWaitTime = 1;
     const dateTime = req.body.dateTime;
 
     connection.query(`SELECT *
@@ -38,7 +39,7 @@ export function removeCustomerFromFront (req: Request, res: Response){
         });
 
         connection.query(`UPDATE queues
-        SET estimatedWaitTime = estimatedWaitTime - (SELECT estimatedWaitTime FROM queues WHERE position = 1 AND store = ${store_id})
+        SET estimatedWaitTime = estimatedWaitTime - ${estimatedWaitTime}
         WHERE store = ${store_id} AND position > 1; DELETE FROM queues WHERE position = 1 AND store = ${store_id}; 
         UPDATE queues SET position = position - 1 WHERE store = ${store_id} and position > 1;`, (err:any, sql_response:any) => {
             if (err) {

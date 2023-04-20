@@ -34,8 +34,10 @@ export function moveCustomer (req: Request, res: Response){
         
         var idSwitchCustomer = parseInt(sql_response[0][0]["userID"])
 
-        connection.query(`UPDATE queues SET position = ${switchPosition} WHERE userID = ${userID};
-        UPDATE queues SET position = ${currentPosition} WHERE userID = ${idSwitchCustomer};`, (err:any, customerPosition:any) => {
+        connection.query(`UPDATE queues SET position = ${switchPosition}, estimatedWaitTime = (SELECT sum(customerTime) FROM queues WHERE store = ${store_id} AND position < ${switchPosition})
+        WHERE userID = ${userID};
+        UPDATE queues SET position = ${currentPosition}, estimatedWaitTime = (SELECT sum(customerTime) FROM queues WHERE store = ${store_id} AND position < ${currentPosition})
+        WHERE userID = ${idSwitchCustomer};`, (err:any, customerPosition:any) => {
 
             moveCustomerUpdateWaitTime(store_id, switchPosition, max_position)
 

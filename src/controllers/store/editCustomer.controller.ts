@@ -16,7 +16,8 @@ export function editCustomer (req: Request, res: Response){
             console.error(err);
             return res.status(400).send("Error with getting customer details.");
         }
-        
+
+        connection.end();
         return res.status(201).send(result);
     });
 
