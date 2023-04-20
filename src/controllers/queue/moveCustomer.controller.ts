@@ -8,6 +8,7 @@ export function moveCustomer (req: Request, res: Response){
     const store_id = req.params.store_id
     const userID = req.body.userID;
     const up_or_down = req.body.up_or_down;
+    //const estimatedWaitTime = req.body.estimatedWaitTime;
 
     //Check if the user is already on top of the queue
     if(up_or_down != "up" && up_or_down != "down"){
@@ -25,7 +26,12 @@ export function moveCustomer (req: Request, res: Response){
     //this is the data that is going to be sent to the website.
     connection.query(`SELECT userID FROM queues WHERE store = ${store_id} AND position = ${switchPosition};
     SELECT count(*) from queues WHERE store = ${store_id};`, (err:any, sql_response:any) => {
+
+        console.log(sql_response)
+        
         var max_position = parseInt(sql_response[1][0]["count(*)"])
+
+        console.log(max_position)
         
         //check that the customer in the queue is not the last one.
         if(switchPosition > max_position){
@@ -33,13 +39,17 @@ export function moveCustomer (req: Request, res: Response){
         } 
         
         var idSwitchCustomer = parseInt(sql_response[0][0]["userID"])
+        var timeSwitchCustomer = parseInt(sql_response[0][0]["customerTime"])
 
-        connection.query(`UPDATE queues SET position = ${switchPosition}, estimatedWaitTime = (SELECT sum(customerTime) FROM queues WHERE store = ${store_id} AND position < ${switchPosition})
-        WHERE userID = ${userID};
-        UPDATE queues SET position = ${currentPosition}, estimatedWaitTime = (SELECT sum(customerTime) FROM queues WHERE store = ${store_id} AND position < ${currentPosition})
-        WHERE userID = ${idSwitchCustomer};`, (err:any, customerPosition:any) => {
+        connection.query(`UPDATE queues SET position = ${switchPosition} WHERE userID = ${userID};
+        UPDATE queues SET position = ${currentPosition} WHERE userID = ${idSwitchCustomer};`, (err:any, customerPosition:any) => {
+            
+            if(err){
+                console.log(err);
+                return res.status(400).send('Cannot move customer');
+            }
 
-            moveCustomerUpdateWaitTime(store_id, switchPosition, max_position)
+            moveCustomerUpdateWaitTime(store_id, switchPosition, currentPosition)
 
             return res.status(201).send(up_or_down == 'up' ? 'Customer moved up the queue successfully' : 'Customer moved down the queue successfully');
         })
