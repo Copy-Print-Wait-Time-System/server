@@ -12,6 +12,8 @@ export function getStore (req: Request, res: Response){
     //this is the data that is going to be sent to the website.
     connection.query(`SELECT * FROM stores WHERE store=${store_id}`, (err:any, result:any) => {
 
+
+        connection.end();
         return res.status(201).send(result);
     });
 
