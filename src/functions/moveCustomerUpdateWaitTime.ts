@@ -4,18 +4,32 @@ export function moveCustomerUpdateWaitTime(store_id: string, position1: number, 
 
     const connection = connect();
 
-    connection.query(`
+    connection.query(`SELECT sum(customerTime) FROM queues WHERE store = ${store_id} AND position < ${position1};
+    SELECT sum(customerTime) FROM queues WHERE store = ${store_id} AND position < ${position2};`, (err, result:any) => {
+        
+        const position1WaitTime = result[0][0]["sum(customerTime)"];
+        const position2WaitTime = result[1][0]["sum(customerTime)"];
+        
+        connection.query(`
     
-    UPDATE queues
-    SET estimatedWaitTime = (SELECT sum(customerTime) FROM queues WHERE position < ${position1} AND store = ${store_id})
-    WHERE store = ${store_id} and position = ${position1} ;
-    
-    UPDATE queues
-    SET estimatedWaitTime = (SELECT sum(customerTime) FROM queues WHERE position < ${position2} AND store = ${store_id})
-    WHERE store = ${store_id} and position = ${position2};` , (err:any, res:any) => {
+        UPDATE queues
+        SET estimatedWaitTime = ${position1WaitTime}
+        WHERE store = ${store_id} and position = ${position1} ;
+        
+        UPDATE queues
+        SET estimatedWaitTime = ${position2WaitTime}
+        WHERE store = ${store_id} and position = ${position2};` , (err:any, res:any) => {
 
-        console.log(`test`)
+        if(err){
+            console.log(err);
+        }
+
+        connection.end();
+        
     });
 
 
+
+    });
+    
 }
