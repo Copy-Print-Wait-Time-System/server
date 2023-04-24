@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { connect } from "../../database";
 import { updateStoreWaitTime } from "../../functions/updateStoreWaitTime";
 
-export async function removeCustomerFromFront (req: Request, res: Response){
+export function removeCustomerFromFront (req: Request, res: Response){
     const connection = connect();
 
     const store_id = req.params.store_id
@@ -42,18 +42,18 @@ export async function removeCustomerFromFront (req: Request, res: Response){
         connection.query(`UPDATE queues
         SET estimatedWaitTime = estimatedWaitTime - ${estimatedWaitTime}
         WHERE store = ${store_id} AND position > 1; DELETE FROM queues WHERE position = 1 AND store = ${store_id}; 
-        UPDATE queues SET position = position - 1 WHERE store = ${store_id} and position > 1;`, (err:any, sql_response:any) => {
+        UPDATE queues SET position = position - 1 WHERE store = ${store_id} and position > 1;`, async (err:any, sql_response:any) => {
             if (err) {
             console.error(err);
             return res.status(400).send("Error with removing customer from the front.");
             }
 
+            await updateStoreWaitTime(store_id);
             return res.status(201).send('Customer in front removed from queue')
         });
 
         
     });
 
-    await updateStoreWaitTime(store_id);
 
 }
