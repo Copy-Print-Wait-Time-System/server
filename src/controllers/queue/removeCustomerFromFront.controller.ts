@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
 import { connect } from "../../database";
+import { updateStoreWaitTime } from "../../functions/updateStoreWaitTime";
 
-export function removeCustomerFromFront (req: Request, res: Response){
+export async function removeCustomerFromFront (req: Request, res: Response){
     const connection = connect();
 
     const store_id = req.params.store_id
@@ -50,6 +51,9 @@ export function removeCustomerFromFront (req: Request, res: Response){
             return res.status(201).send('Customer in front removed from queue')
         });
 
+        
     });
+
+    await updateStoreWaitTime(store_id);
 
 }
